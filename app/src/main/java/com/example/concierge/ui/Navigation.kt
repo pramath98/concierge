@@ -50,7 +50,7 @@ fun TopAppBar(title: @Composable () -> Unit) {
 fun ConciergeBottomNavigationBar(navController: NavController) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        tonalElevation = 8.dp
+        tonalElevation = 6.dp
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
