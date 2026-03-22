@@ -12,4 +12,8 @@ class FuelLogsRepository(private val fuelLogsDao: FuelLogsDao) {
     suspend fun delete(fuelLog: FuelLogs) {
         fuelLogsDao.delete(fuelLog)
     }
+
+    fun getLatestDistance(userId: Int): Flow<Double?> {
+        return fuelLogsDao.getLatestDistance(userId)
+    }
 }

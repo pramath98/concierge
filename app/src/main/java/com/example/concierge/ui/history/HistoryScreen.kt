@@ -22,6 +22,8 @@ import com.example.concierge.ui.theme.PrimaryBlue
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.ui.res.stringResource
+import com.example.concierge.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,6 +109,7 @@ fun HistoryScreen(viewModel: FuelLogsViewModel) {
 fun HistoryCard(log: FuelLogs) {
     val dayFormat = SimpleDateFormat("dd", Locale.getDefault())
     val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+    val  currency = stringResource(R.string.currency)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -154,7 +157,7 @@ fun HistoryCard(log: FuelLogs) {
                 )
             }
             Text(
-                text = "₹${log.cost}",
+                text = "$currency ${log.cost}",
                 style = MaterialTheme.typography.titleLarge,
                 color = PrimaryBlue
             )

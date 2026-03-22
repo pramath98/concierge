@@ -18,4 +18,7 @@ interface FuelLogsDao {
     @Query("SELECT * FROM FuelLogs WHERE userId = :userId ORDER BY date DESC")
     fun getFuelLogsOrderedByDate(userId: Int): Flow<List<FuelLogs>>
 
+    @Query("SELECT distanceToDate FROM FuelLogs WHERE userId = :userId ORDER BY id DESC LIMIT 1")
+    fun getLatestDistance(userId: Int): Flow<Double?>
+
 }

@@ -10,6 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,9 +24,12 @@ import com.example.concierge.ui.components.BarChart
 import com.example.concierge.ui.components.DonutChart
 import com.example.concierge.ui.theme.PrimaryBlue
 import com.example.concierge.ui.theme.SecondaryGreen
+import androidx.compose.ui.res.stringResource
+import com.example.concierge.R
+import com.example.concierge.ui.FuelLogsViewModel
 
 @Composable
-fun StatsScreen() {
+fun StatsScreen(viewModel: FuelLogsViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -80,6 +85,7 @@ fun StatsScreen() {
                 shape = MaterialTheme.shapes.large,
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
+                val distanceCovered by viewModel.getLatestDistance(userId = 1).collectAsState(initial = 0.0)
                 Column(modifier = Modifier.padding(24.dp)) {
                     Text(
                         text = "Total Odometer",
@@ -88,7 +94,7 @@ fun StatsScreen() {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "12,450 km",
+                        text = "$distanceCovered km",
                         style = MaterialTheme.typography.displaySmall,
                         color = PrimaryBlue
                     )
@@ -157,7 +163,8 @@ fun StatsScreen() {
                             modifier = Modifier.size(180.dp)
                         )
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("₹2.4k", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                            val currency = stringResource(R.string.currency)
+                            Text("$currency 2.4k", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
                             Text("Total", style = MaterialTheme.typography.labelSmall)
                         }
                     }

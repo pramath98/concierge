@@ -19,6 +19,10 @@ class FuelLogsViewModel(private val repository: FuelLogsRepository) : ViewModel(
     fun delete(fuelLog: FuelLogs) = viewModelScope.launch {
         repository.delete(fuelLog)
     }
+
+    fun getLatestDistance(userId: Int): Flow<Double?> {
+        return repository.getLatestDistance(userId)
+    }
 }
 
 class FuelLogsViewModelFactory(private val repository: FuelLogsRepository) : ViewModelProvider.Factory {

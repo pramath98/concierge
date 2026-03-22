@@ -21,6 +21,8 @@ import com.example.concierge.ui.theme.SecondaryGreen
 import java.util.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.ui.res.stringResource
+import com.example.concierge.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +32,9 @@ fun EntryScreen(viewModel: FuelLogsViewModel, onSave: () -> Unit = {}) {
     var fuelAdded by remember { mutableStateOf("") }
     var totalCost by remember { mutableStateOf("") }
     var fuelPump by remember { mutableStateOf("") }
+    val currency = stringResource(R.string.currency)
+    val distanceCovered by viewModel.getLatestDistance(userId = 1).collectAsState(initial = 0.0)
+
 
     Column(
         modifier = Modifier
@@ -57,7 +62,7 @@ fun EntryScreen(viewModel: FuelLogsViewModel, onSave: () -> Unit = {}) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "12,450 km",
+                        text = "$distanceCovered km",
                         style = MaterialTheme.typography.titleLarge,
                         color = SecondaryGreen
                     )
@@ -113,7 +118,7 @@ fun EntryScreen(viewModel: FuelLogsViewModel, onSave: () -> Unit = {}) {
             OutlinedTextField(
                 value = totalCost,
                 onValueChange = { totalCost = it },
-                label = { Text("Total Cost ($)") },
+                label = { Text("Total Cost (in $currency)") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
             )

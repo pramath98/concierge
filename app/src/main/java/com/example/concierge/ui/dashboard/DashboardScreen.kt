@@ -15,15 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.concierge.R
 import com.example.concierge.ui.components.BarChart
 import com.example.concierge.ui.theme.PrimaryBlue
 import com.example.concierge.ui.theme.SecondaryGreen
 
 @Composable
 fun DashboardScreen() {
+    val currency = stringResource(R.string.currency)
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -50,7 +53,7 @@ fun DashboardScreen() {
                             color = Color.White.copy(alpha = 0.7f)
                         )
                         Text(
-                            text = "₹12,450.00",
+                            text = "${currency}12,450.00",
                             style = MaterialTheme.typography.displayLarge.copy(fontSize = 40.sp),
                             color = Color.White
                         )
@@ -158,9 +161,9 @@ fun DashboardScreen() {
         }
 
         val recentActivity = listOf(
-            ActivityItem("Fuel", "Oct 24", "₹85.00", Icons.Default.LocalGasStation),
-            ActivityItem("Service", "Oct 20", "₹450.00", Icons.Default.Build),
-            ActivityItem("Fuel", "Oct 12", "₹78.00", Icons.Default.LocalGasStation)
+            ActivityItem("Fuel", "Oct 24", "${currency}85.00", Icons.Default.LocalGasStation),
+            ActivityItem("Service", "Oct 20", "${currency}450.00", Icons.Default.Build),
+            ActivityItem("Fuel", "Oct 12", "${currency}78.00", Icons.Default.LocalGasStation)
         )
 
         items(recentActivity) { activity ->
