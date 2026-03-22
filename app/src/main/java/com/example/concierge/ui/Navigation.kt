@@ -106,7 +106,7 @@ fun ConciergeApp() {
             composable(Screen.Dashboard.route) { DashboardScreen() }
             composable(Screen.History.route) { HistoryScreen(viewModel) }
             composable(Screen.Entry.route) { EntryScreen(viewModel) }
-            composable(Screen.Stats.route) { StatsScreen() }
+            composable(Screen.Stats.route) { StatsScreen(viewModel) }
         }
     }
 }
