@@ -157,7 +157,7 @@ fun StatsScreen() {
                             modifier = Modifier.size(180.dp)
                         )
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("$2.4k", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                            Text("₹2.4k", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
                             Text("Total", style = MaterialTheme.typography.labelSmall)
                         }
                     }

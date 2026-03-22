@@ -32,8 +32,6 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = OnBackground
 )
 
-// For the premium feel, we might want a dark theme eventually, but the prompt emphasizes a warm 'Editorial' theme.
-// I'll stick to LightColorScheme mostly or a complementary dark one.
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryBlue,
     secondary = SecondaryGreen,
@@ -53,8 +51,8 @@ val ConciergeShapes = Shapes(
 @Composable
 fun ConciergeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false, // Set to false to prioritize the editorial theme
+    // Dynamic color (Material You) is available on Android 12+
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

@@ -50,7 +50,7 @@ fun DashboardScreen() {
                             color = Color.White.copy(alpha = 0.7f)
                         )
                         Text(
-                            text = "$12,450.00",
+                            text = "₹12,450.00",
                             style = MaterialTheme.typography.displayLarge.copy(fontSize = 40.sp),
                             color = Color.White
                         )
@@ -158,9 +158,9 @@ fun DashboardScreen() {
         }
 
         val recentActivity = listOf(
-            ActivityItem("Fuel", "Oct 24", "$85.00", Icons.Default.LocalGasStation),
-            ActivityItem("Service", "Oct 20", "$450.00", Icons.Default.Build),
-            ActivityItem("Fuel", "Oct 12", "$78.00", Icons.Default.LocalGasStation)
+            ActivityItem("Fuel", "Oct 24", "₹85.00", Icons.Default.LocalGasStation),
+            ActivityItem("Service", "Oct 20", "₹450.00", Icons.Default.Build),
+            ActivityItem("Fuel", "Oct 12", "₹78.00", Icons.Default.LocalGasStation)
         )
 
         items(recentActivity) { activity ->

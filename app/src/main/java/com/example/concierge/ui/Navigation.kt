@@ -11,12 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.concierge.ConciergeApplication
 import com.example.concierge.ui.dashboard.DashboardScreen
 import com.example.concierge.ui.entry.EntryScreen
 import com.example.concierge.ui.history.HistoryScreen
@@ -36,6 +39,13 @@ val items = listOf(
     Screen.Stats,
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBar(title: @Composable () -> Unit) {
+    CenterAlignedTopAppBar(
+        title = title,
+    )
+}
 @Composable
 fun ConciergeBottomNavigationBar(navController: NavController) {
     NavigationBar(
@@ -80,7 +90,12 @@ fun ConciergeBottomNavigationBar(navController: NavController) {
 @Composable
 fun ConciergeApp() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val repository = (context.applicationContext as ConciergeApplication).repository
+    val viewModel: FuelLogsViewModel = viewModel(factory = FuelLogsViewModelFactory(repository))
+
     Scaffold(
+        topBar = { TopAppBar(title = { Text("Trl.in") }) },
         bottomBar = { ConciergeBottomNavigationBar(navController = navController) }
     ) { innerPadding ->
         NavHost(
@@ -89,8 +104,8 @@ fun ConciergeApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Dashboard.route) { DashboardScreen() }
-            composable(Screen.History.route) { HistoryScreen() }
-            composable(Screen.Entry.route) { EntryScreen() }
+            composable(Screen.History.route) { HistoryScreen(viewModel) }
+            composable(Screen.Entry.route) { EntryScreen(viewModel) }
             composable(Screen.Stats.route) { StatsScreen() }
         }
     }

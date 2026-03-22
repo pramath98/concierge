@@ -8,22 +8,33 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.concierge.db.FuelLogs
+import com.example.concierge.ui.FuelLogsViewModel
+import com.example.concierge.ui.entry.EntryScreen
 import com.example.concierge.ui.theme.PrimaryBlue
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(viewModel: FuelLogsViewModel) {
+    val fuelLogs by viewModel.getFuelLogs(userId = 1).collectAsState(initial = emptyList())
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO */ },
+                onClick = { showBottomSheet = true },
                 containerColor = PrimaryBlue,
                 contentColor = Color.White,
                 shape = RoundedCornerShape(20.dp)
@@ -50,26 +61,53 @@ fun HistoryScreen() {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            val historyItems = listOf(
-                HistoryItem("24", "OCT", "Shell Station, Downtown", "$85.00", "12,450 km", "15.4 gal"),
-                HistoryItem("20", "OCT", "Service Center East", "$450.00", "12,380 km", "-"),
-                HistoryItem("12", "OCT", "Highway Stop #4", "$78.00", "12,120 km", "14.2 gal"),
-                HistoryItem("05", "OCT", "Shell Station, West", "$82.00", "11,850 km", "14.8 gal")
-            )
-
-            items(historyItems) { item ->
-                HistoryCard(item)
+            if (fuelLogs.isEmpty()) {
+                item {
+                    Text(
+                        text = "No logs yet. Add your first fuel log!",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                }
+            } else {
+                items(fuelLogs) { log ->
+                    HistoryCard(log)
+                }
             }
             
             item {
                 Spacer(modifier = Modifier.height(80.dp))
             }
         }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState
+            ) {
+                // Reusing EntryScreen content within the bottom sheet
+                Box(modifier = Modifier.fillMaxHeight(0.8f)) {
+                    EntryScreen(
+                        viewModel = viewModel,
+                        onSave = {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun HistoryCard(item: HistoryItem) {
+fun HistoryCard(log: FuelLogs) {
+    val dayFormat = SimpleDateFormat("dd", Locale.getDefault())
+    val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
@@ -91,12 +129,12 @@ fun HistoryCard(item: HistoryItem) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = item.day,
+                        text = dayFormat.format(log.date),
                         style = MaterialTheme.typography.titleLarge,
                         color = PrimaryBlue
                     )
                     Text(
-                        text = item.month,
+                        text = monthFormat.format(log.date).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = PrimaryBlue
                     )
@@ -105,30 +143,21 @@ fun HistoryCard(item: HistoryItem) {
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = item.location,
+                    text = log.fuelPump,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${item.odometer} • ${item.gallons}",
+                    text = "${log.distanceToDate} km • ${log.liters} L",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             }
             Text(
-                text = item.cost,
+                text = "₹${log.cost}",
                 style = MaterialTheme.typography.titleLarge,
                 color = PrimaryBlue
             )
         }
     }
 }
-
-data class HistoryItem(
-    val day: String,
-    val month: String,
-    val location: String,
-    val cost: String,
-    val odometer: String,
-    val gallons: String
-)

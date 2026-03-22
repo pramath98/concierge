@@ -14,16 +14,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.concierge.db.FuelLogs
+import com.example.concierge.ui.FuelLogsViewModel
 import com.example.concierge.ui.theme.PrimaryBlue
 import com.example.concierge.ui.theme.SecondaryGreen
+import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryScreen() {
-    var date by remember { mutableStateOf("Oct 24, 2023") }
+fun EntryScreen(viewModel: FuelLogsViewModel, onSave: () -> Unit = {}) {
+    var dateText by remember { mutableStateOf(SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date())) }
     var odometer by remember { mutableStateOf("") }
     var fuelAdded by remember { mutableStateOf("") }
     var totalCost by remember { mutableStateOf("") }
+    var fuelPump by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -72,11 +78,19 @@ fun EntryScreen() {
         // Form fields
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             OutlinedTextField(
-                value = date,
-                onValueChange = { date = it },
+                value = dateText,
+                onValueChange = { dateText = it },
                 label = { Text("Date") },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = { Icon(Icons.Default.CalendarToday, contentDescription = null) },
+                shape = MaterialTheme.shapes.medium
+            )
+
+            OutlinedTextField(
+                value = fuelPump,
+                onValueChange = { fuelPump = it },
+                label = { Text("Fuel Station / Pump") },
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
             )
 
@@ -110,7 +124,25 @@ fun EntryScreen() {
         // Buttons
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
-                onClick = { /* Save */ },
+                onClick = {
+                    val parsedDate = try {
+                        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).parse(dateText) ?: Date()
+                    } catch (e: Exception) {
+                        Date()
+                    }
+
+                    val log = FuelLogs(
+                        fuelPump = fuelPump.ifBlank { "Unspecified" },
+                        date = parsedDate,
+                        liters = fuelAdded.toDoubleOrNull() ?: 0.0,
+                        cost = totalCost.toDoubleOrNull() ?: 0.0,
+                        distanceToDate = odometer.toDoubleOrNull() ?: 0.0,
+                        vehicleId = 1,
+                        userId = 1
+                    )
+                    viewModel.insert(log)
+                    onSave()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp),
@@ -125,7 +157,7 @@ fun EntryScreen() {
             }
 
             TextButton(
-                onClick = { /* Cancel */ },
+                onClick = { onSave() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp),
